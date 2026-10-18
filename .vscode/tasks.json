@@ -1,0 +1,63 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "front: parar container",
+      "detail": "Remove o container do front (só parar mantém a porta 3000 presa no Docker Desktop); recriado no próximo compose up",
+      "type": "shell",
+      "command": "docker compose rm -sf web",
+      "problemMatcher": [],
+      "presentation": { "reveal": "silent", "panel": "shared" }
+    },
+    {
+      "label": "front: verificar porta 3000",
+      "detail": "Falha se a porta 3000 estiver ocupada (o Next mudaria para 3001 e quebraria o AUTH_URL)",
+      "type": "shell",
+      "command": "node scripts/verificar-porta.mjs 3000",
+      "problemMatcher": [],
+      "presentation": { "reveal": "silent", "panel": "shared" }
+    },
+    {
+      "label": "api: aguardar API local (8081)",
+      "detail": "Espera a API responder UP em /actuator/health (até 4 min) — garante a ordem Keycloak → API → Front",
+      "type": "shell",
+      "command": "node scripts/aguardar-api.mjs 240",
+      "options": { "env": { "API_URL": "http://localhost:8081" } },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+    },
+    {
+      "label": "front: preparar ambiente local",
+      "detail": "Para o container do front e aguarda a API local antes de iniciar o Next",
+      "dependsOn": ["front: parar container", "front: verificar porta 3000", "api: aguardar API local (8081)"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "compose: subir front em container",
+      "detail": "Requer o backend no ar (rede tarefas-rede)",
+      "type": "shell",
+      "command": "docker compose up -d --build",
+      "problemMatcher": []
+    },
+    {
+      "label": "compose: parar front",
+      "type": "shell",
+      "command": "docker compose down",
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: testes com cobertura",
+      "type": "shell",
+      "command": "npm run test:cobertura",
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: lint + build",
+      "type": "shell",
+      "command": "npm run lint; if ($?) { npm run build }",
+      "problemMatcher": []
+    }
+  ]
+}
