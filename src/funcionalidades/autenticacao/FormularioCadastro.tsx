@@ -78,7 +78,7 @@ export function FormularioCadastro() {
 
   return (
     <form onSubmit={submeter} noValidate className="flex flex-col gap-4" aria-label="Criar conta">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Campo id="cadastro-nome" rotulo="Nome" erro={erros.nome?.message}>
           <Input id="cadastro-nome" autoComplete="given-name" {...register("nome")} />
         </Campo>
@@ -92,7 +92,7 @@ export function FormularioCadastro() {
       <Campo id="cadastro-usuario" rotulo="Usuário" erro={erros.usuario?.message}>
         <Input id="cadastro-usuario" autoComplete="username" {...register("usuario")} />
       </Campo>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Campo id="cadastro-senha" rotulo="Senha" erro={erros.senha?.message}>
           <Input id="cadastro-senha" type="password" autoComplete="new-password" {...register("senha")} />
         </Campo>

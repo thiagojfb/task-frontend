@@ -120,5 +120,60 @@ describe("LinhaTarefa", () => {
     );
     expect(screen.getByLabelText("Concluir")).toBeDisabled();
     expect(screen.getByLabelText("Excluir tarefa Pagar conta de luz")).toBeDisabled();
+    expect(screen.getByLabelText("Mais ações da tarefa Pagar conta de luz")).toBeDisabled();
+  });
+
+  it("deve abrir a edição ao tocar na descrição", async () => {
+    const usuario = userEvent.setup();
+    const acoes = renderizar(base);
+    await usuario.click(screen.getByRole("button", { name: "Pagar conta de luz" }));
+    expect(acoes.aoEditar).toHaveBeenCalledWith(base);
+  });
+
+  it("deve repetir o valor na linha de detalhes do celular somente quando maior que zero", () => {
+    const { unmount } = render(
+      <TooltipProvider>
+        <ul>
+          <LinhaTarefa tarefa={base} {...acoesFalsas()} />
+        </ul>
+      </TooltipProvider>,
+    );
+    expect(screen.getByTestId("valor-compacto")).toHaveTextContent("R$ 250,00");
+    unmount();
+
+    renderizar({ ...base, valor: 0 });
+    expect(screen.queryByTestId("valor-compacto")).not.toBeInTheDocument();
+  });
+
+  it("deve oferecer editar e mover pelo menu de ações do celular", async () => {
+    const usuario = userEvent.setup();
+    const acoes = renderizar(base);
+    const abrirMenu = () => usuario.click(screen.getByLabelText("Mais ações da tarefa Pagar conta de luz"));
+
+    await abrirMenu();
+    await usuario.click(await screen.findByRole("menuitem", { name: "Editar" }));
+    expect(acoes.aoEditar).toHaveBeenCalledWith(base);
+
+    await abrirMenu();
+    await usuario.click(await screen.findByRole("menuitem", { name: "Mover para o topo" }));
+    expect(acoes.aoMoverTopo).toHaveBeenCalledWith("t1");
+
+    await abrirMenu();
+    await usuario.click(await screen.findByRole("menuitem", { name: "Mover para o final" }));
+    expect(acoes.aoMoverFinal).toHaveBeenCalledWith("t1");
+    expect(screen.queryByText("Excluir esta tarefa?")).not.toBeInTheDocument();
+  });
+
+  it("deve pedir confirmação no balão ao excluir pelo menu de ações do celular", async () => {
+    const usuario = userEvent.setup();
+    const acoes = renderizar(base);
+
+    await usuario.click(screen.getByLabelText("Mais ações da tarefa Pagar conta de luz"));
+    await usuario.click(await screen.findByRole("menuitem", { name: "Excluir" }));
+    expect(await screen.findByText("Excluir esta tarefa?")).toBeInTheDocument();
+    expect(acoes.aoExcluir).not.toHaveBeenCalled();
+
+    await usuario.click(screen.getByRole("button", { name: "Excluir" }));
+    expect(acoes.aoExcluir).toHaveBeenCalledWith("t1");
   });
 });

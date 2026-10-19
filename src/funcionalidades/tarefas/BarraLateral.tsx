@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import type { FiltroSituacao, ResumoFinanceiro } from "@/tipos/api";
 
-const FILTROS: { valor: FiltroSituacao; rotulo: string; Icone: typeof ListTodo }[] = [
+export const FILTROS: { valor: FiltroSituacao; rotulo: string; Icone: typeof ListTodo }[] = [
   { valor: "TODAS", rotulo: "Todas", Icone: ListTodo },
   { valor: "ABERTAS", rotulo: "Abertas", Icone: CircleDashed },
   { valor: "CONCLUIDAS", rotulo: "Concluídas", Icone: CircleCheckBig },
@@ -20,13 +20,23 @@ interface PropsBarraLateral {
   carregandoResumo?: boolean;
   nomeUsuario: string;
   aoSair?: () => void;
+  className?: string;
 }
 
-export function BarraLateral({ filtro, aoFiltrar, resumo, carregandoResumo, nomeUsuario, aoSair }: PropsBarraLateral) {
+/** Filtros, total do mês e usuário. Fixa à esquerda a partir de lg; abaixo disso, aberta pelo menu ☰. */
+export function BarraLateral({
+  filtro,
+  aoFiltrar,
+  resumo,
+  carregandoResumo,
+  nomeUsuario,
+  aoSair,
+  className,
+}: PropsBarraLateral) {
   const sair = aoSair ?? (() => signOut({ callbackUrl: "/login" }));
 
   return (
-    <aside className="bg-sidebar text-sidebar-foreground flex h-full w-64 shrink-0 flex-col border-r">
+    <aside className={cn("bg-sidebar text-sidebar-foreground flex h-full w-64 shrink-0 flex-col border-r", className)}>
       <div className="flex items-center gap-2 px-5 py-5">
         <div className="bg-primary text-primary-foreground grid size-8 place-items-center rounded-lg font-bold">T</div>
         <span className="text-lg font-semibold">Tarefas</span>
@@ -42,7 +52,7 @@ export function BarraLateral({ filtro, aoFiltrar, resumo, carregandoResumo, nome
                 onClick={() => aoFiltrar(valor)}
                 aria-pressed={filtro === valor}
                 className={cn(
-                  "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors",
+                  "flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm transition-colors md:py-2",
                   filtro === valor
                     ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
                     : "hover:bg-sidebar-accent/60",

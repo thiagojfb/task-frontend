@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -56,9 +56,32 @@ describe("Dashboard", () => {
   it("deve compor barra lateral, cabeçalho e lista com os dados da API", async () => {
     renderizar();
     expect(await screen.findByText("Tarefa 1")).toBeInTheDocument();
-    expect(screen.getByText("R$ 10,00")).toBeInTheDocument();
+    // Barra lateral (telas maiores) e resumo compacto (celular)
+    await waitFor(() => expect(screen.getAllByText("R$ 10,00")).toHaveLength(2));
     expect(screen.getByText("Ana Silva")).toBeInTheDocument();
     expect(apiFalsa.listarTarefas).toHaveBeenCalledWith("TODAS", "");
+  });
+
+  it("deve abrir a barra lateral como menu no celular e fechá-lo ao escolher um filtro", async () => {
+    const usuario = userEvent.setup();
+    renderizar();
+    await screen.findByText("Tarefa 1");
+
+    await usuario.click(screen.getByRole("button", { name: "Abrir menu" }));
+    const menu = await screen.findByRole("dialog", { name: "Menu" });
+    await usuario.click(within(menu).getByRole("button", { name: "Concluídas" }));
+
+    await waitFor(() => expect(apiFalsa.listarTarefas).toHaveBeenCalledWith("CONCLUIDAS", ""));
+    await waitFor(() => expect(screen.queryByRole("dialog", { name: "Menu" })).not.toBeInTheDocument());
+  });
+
+  it("deve abrir o menu também pelo resumo compacto do celular", async () => {
+    const usuario = userEvent.setup();
+    renderizar();
+    await screen.findByText("Tarefa 1");
+
+    await usuario.click(screen.getByRole("button", { name: /No mês/ }));
+    expect(await screen.findByRole("dialog", { name: "Menu" })).toBeInTheDocument();
   });
 
   it("deve refazer a busca ao trocar o filtro e gravar a preferência na API", async () => {
