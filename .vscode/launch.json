@@ -1,0 +1,41 @@
+{
+  // Sobe o Next.js em modo dev (http://localhost:3000) apontando para a API local (8081).
+  // A 1ª configuração espera a API responder (tarefa "api: aguardar API local"), garantindo a ordem
+  // Keycloak → API → Front quando usada no compound do workspace.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node-terminal",
+      "request": "launch",
+      "name": "Front local (next dev) — aguarda a API e sobe em sequência",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "front: preparar ambiente local",
+      "env": {
+        "AUTH_SECRET": "segredo-de-desenvolvimento-local-0123456789",
+        "AUTH_URL": "http://localhost:3000",
+        "AUTH_TRUST_HOST": "true",
+        "API_URL": "http://localhost:8081",
+        "KEYCLOAK_URL_INTERNO": "http://localhost:8180",
+        "KEYCLOAK_REALM": "tarefas",
+        "KEYCLOAK_CLIENT_ID": "tarefas-frontend"
+      }
+    },
+    {
+      "type": "node-terminal",
+      "request": "launch",
+      "name": "Front local (next dev) — sem esperar a API",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "AUTH_SECRET": "segredo-de-desenvolvimento-local-0123456789",
+        "AUTH_URL": "http://localhost:3000",
+        "AUTH_TRUST_HOST": "true",
+        "API_URL": "http://localhost:8081",
+        "KEYCLOAK_URL_INTERNO": "http://localhost:8180",
+        "KEYCLOAK_REALM": "tarefas",
+        "KEYCLOAK_CLIENT_ID": "tarefas-frontend"
+      }
+    }
+  ]
+}

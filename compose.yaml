@@ -1,0 +1,22 @@
+services:
+  web:
+    build: .
+    ports:
+      - "${WEB_PORTA:-3000}:3000"
+    environment:
+      # Segredo de desenvolvimento; em outros ambientes defina AUTH_SECRET no ambiente do host
+      AUTH_SECRET: ${AUTH_SECRET:-segredo-de-desenvolvimento-troque-em-producao-0123456789}
+      AUTH_URL: http://localhost:${WEB_PORTA:-3000}
+      AUTH_TRUST_HOST: "true"
+      # Comunicação entre containers pela rede compartilhada criada pelo backend
+      API_URL: http://task-backend:8080
+      KEYCLOAK_URL_INTERNO: http://keycloak:8080
+      KEYCLOAK_REALM: tarefas
+      KEYCLOAK_CLIENT_ID: tarefas-frontend
+    networks:
+      - tarefas-rede
+
+networks:
+  # Criada pelo compose do backend (../task-backend). Suba o backend antes do frontend.
+  tarefas-rede:
+    external: true
