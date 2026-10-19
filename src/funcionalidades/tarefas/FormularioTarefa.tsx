@@ -63,12 +63,12 @@ export function FormularioTarefa({ tarefa, aoSalvar, aoCancelar, salvando, erroS
         <MensagemErro id="erro-descricao" texto={formState.errors.descricao?.message} />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="grid gap-1.5">
           <Label htmlFor="prioridade">Prioridade</Label>
           <select
             id="prioridade"
-            className="border-input bg-background h-9 rounded-md border px-3 text-sm shadow-xs focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
+            className="border-input bg-background h-9 rounded-md border px-3 text-base shadow-xs md:text-sm focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
             {...register("prioridade")}
           >
             {(Object.keys(ROTULO_PRIORIDADE) as (keyof typeof ROTULO_PRIORIDADE)[]).map((prioridade) => (
@@ -112,11 +112,11 @@ export function FormularioTarefa({ tarefa, aoSalvar, aoCancelar, salvando, erroS
         </p>
       )}
 
-      <div className="mt-2 flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={aoCancelar} disabled={salvando}>
+      <div className="mt-2 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        <Button type="button" variant="outline" onClick={aoCancelar} disabled={salvando} className="h-10 sm:h-8">
           Cancelar
         </Button>
-        <Button type="submit" disabled={salvando}>
+        <Button type="submit" disabled={salvando} className="h-10 sm:h-8">
           {salvando ? "Salvando…" : tarefa ? "Salvar alterações" : "Criar tarefa"}
         </Button>
       </div>

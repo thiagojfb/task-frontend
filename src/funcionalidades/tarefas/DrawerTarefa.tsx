@@ -44,7 +44,8 @@ export function DrawerTarefa({ aberto, tarefa, aoFechar, aoSalvar }: PropsDrawer
 
   return (
     <Sheet open={aberto} onOpenChange={fechar}>
-      <SheetContent side="right" className="flex w-full flex-col gap-0 overflow-y-auto sm:max-w-lg">
+      {/* data-[side=right]: precisa da mesma especificidade do w-3/4 padrão do Sheet para ocupar o celular todo */}
+      <SheetContent side="right" className="flex flex-col gap-0 overflow-y-auto data-[side=right]:w-full sm:max-w-lg">
         <SheetHeader>
           <SheetTitle>{tarefa ? "Editar tarefa" : "Nova tarefa"}</SheetTitle>
           <SheetDescription>

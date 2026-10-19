@@ -8,7 +8,7 @@ export const metadata = { title: "Entrar · Tarefas" };
 
 export default function PaginaLogin() {
   return (
-    <main className="from-muted/60 to-background flex min-h-screen items-center justify-center bg-linear-to-b p-4">
+    <main className="from-muted/60 to-background flex min-h-dvh items-center justify-center bg-linear-to-b p-4">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="items-center text-center">
           <div className="bg-primary text-primary-foreground mb-2 grid size-12 place-items-center rounded-xl">

@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Search } from "lucide-react";
+import { Menu, Plus, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,11 +9,12 @@ interface PropsCabecalho {
   busca: string;
   aoBuscar: (termo: string) => void;
   aoNovaTarefa: () => void;
+  aoAbrirMenu: () => void;
   atrasoMs?: number;
 }
 
-/** Topo do dashboard: busca (com debounce) e botão de destaque para nova tarefa. */
-export function Cabecalho({ busca, aoBuscar, aoNovaTarefa, atrasoMs = 300 }: PropsCabecalho) {
+/** Topo do dashboard: menu ☰ (celular e tablet), busca (com debounce) e botão de destaque para nova tarefa. */
+export function Cabecalho({ busca, aoBuscar, aoNovaTarefa, aoAbrirMenu, atrasoMs = 300 }: PropsCabecalho) {
   const [texto, definirTexto] = useState(busca);
   const [buscaSincronizada, definirBuscaSincronizada] = useState(busca);
 
@@ -32,7 +33,17 @@ export function Cabecalho({ busca, aoBuscar, aoNovaTarefa, atrasoMs = 300 }: Pro
   }, [texto, busca, aoBuscar, atrasoMs]);
 
   return (
-    <header className="bg-background/80 supports-[backdrop-filter]:bg-background/60 flex items-center gap-4 border-b px-6 py-4 backdrop-blur">
+    <header className="bg-background/80 supports-[backdrop-filter]:bg-background/60 flex items-center gap-2 border-b px-4 py-3 backdrop-blur md:gap-4 md:px-6 md:py-4">
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-lg"
+        aria-label="Abrir menu"
+        onClick={aoAbrirMenu}
+        className="-ml-2 lg:hidden"
+      >
+        <Menu aria-hidden />
+      </Button>
       <div className="relative flex-1 max-w-xl">
         <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" aria-hidden />
         <Input
@@ -44,9 +55,10 @@ export function Cabecalho({ busca, aoBuscar, aoNovaTarefa, atrasoMs = 300 }: Pro
           className="pl-9"
         />
       </div>
-      <Button type="button" onClick={aoNovaTarefa} className="ml-auto">
+      {/* No celular só o ícone "+"; o texto continua como nome acessível */}
+      <Button type="button" onClick={aoNovaTarefa} className="ml-auto h-9 w-9 px-0 sm:h-8 sm:w-auto sm:px-2.5">
         <Plus aria-hidden />
-        Nova Tarefa
+        <span className="sr-only sm:not-sr-only">Nova Tarefa</span>
       </Button>
     </header>
   );
